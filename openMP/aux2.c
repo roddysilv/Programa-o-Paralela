@@ -4,6 +4,7 @@
 
 int main(int argc, char *argv[])
 {
+    int nthreads, tid;
     int thread_count;
 
     int n = 10;
@@ -11,10 +12,13 @@ int main(int argc, char *argv[])
     int xt = 0;
     int x = 0;
 
-#pragma omp parallel num_threads(thread_count)
+#pragma omp parallel private(nthreads, tid)
     {
-        if(omp_get_thread_num()==0){
-            printf("Com %d threads",omp_get_num_threads());
+        tid = omp_get_thread_num();
+        if (tid == 0)
+        {
+            nthreads = omp_get_num_threads();
+            printf("Com %d threads", nthreads);
         }
         for (int i = 0; i < n; i++)
         {
@@ -23,6 +27,7 @@ int main(int argc, char *argv[])
 #pragma omp critical
         xt += x;
     }
-    printf("\nx = %d\n\n", x);
-    return 0;
+
+printf("\nx = %d\n\n", x);
+return 0;
 }
