@@ -14,6 +14,10 @@ int main(int argc, char *argv[])
     int thread_count;
 
     //thread_count = strtol(argv[1], NULL, 10);
+    thread_count = omp_get_max_threads();
+
+    printf("%d threads.\n", thread_count);
+
     printf("Enter a, b, and n\n");
     scanf("%lf %lf %d", &a, &b, &n);
 #pragma omp parallel num_threads(thread_count)
@@ -31,7 +35,7 @@ void Trap(double a, double b, int n, double *global_result_p)
     int i, local_n;
     int my_rank = omp_get_thread_num();
     int thread_count = omp_get_num_threads();
-    
+
     h = (b - a) / n;
     local_n = n / thread_count;
     local_a = a + my_rank * local_n * h;
