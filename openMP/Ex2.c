@@ -8,13 +8,17 @@ double f(double x);
 
 int main(int argc, char *argv[])
 {
-    int thread_count = omp_get_num_threads();
-    double global_result[thread_count];
-    double a, b;
+    double a, b, x = 0;
     int n;
-    double result = 0;
+    int thread_count;
 
     //thread_count = strtol(argv[1], NULL, 10);
+    thread_count = omp_get_max_threads();
+
+    double *global_result = (double *)malloc(thread_count * sizeof(double));
+
+    printf("%d threads.\n", thread_count);
+
     printf("Enter a, b, and n\n");
     scanf("%lf %lf %d", &a, &b, &n);
 #pragma omp parallel num_threads(thread_count)
@@ -22,11 +26,12 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < thread_count; i++)
     {
-        result += global_result[i];
+        x += global_result[i];
     }
+    free(global_result);
 
     printf("With n = %d trapezoids, our estimate\n", n);
-    printf("of the integral from %f to %f = %.14e\n", a, b, result);
+    printf("of the integral from %f to %f = %.14e\n", a, b, x);
     return 0;
 }
 
