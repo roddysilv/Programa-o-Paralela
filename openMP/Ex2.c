@@ -8,27 +8,32 @@ double f(double x);
 
 int main(int argc, char *argv[])
 {
-    double a, b, x = 0;
-    int n;
+    double a = 0;
+    double b = 100;
+    double x = 0;
+    int n = 500000000;
     int thread_count;
 
-    //thread_count = strtol(argv[1], NULL, 10);
-    thread_count = omp_get_max_threads();
+    //thread_count = strtol(argv[1], NULL, 10); // Dá segmentation fault(core dumped) no meu pc
+    //thread_count = omp_get_max_threads();
+    
+    thread_count = 32;
 
-    double *global_result = (double *)malloc(thread_count * sizeof(double));
+    printf("%d Core(s)\n", thread_count);
 
-    printf("%d threads.\n", thread_count);
+    double *global_result_vector = (double *)malloc(thread_count * sizeof(double));
 
-    printf("Enter a, b, and n\n");
-    scanf("%lf %lf %d", &a, &b, &n);
+    //printf("Enter a, b, and n\n");
+    //scanf("%lf %lf %d", &a, &b, &n);
+
 #pragma omp parallel num_threads(thread_count)
-    Trap(a, b, n, global_result);
+    Trap(a, b, n, global_result_vector);
 
     for (int i = 0; i < thread_count; i++)
     {
-        x += global_result[i];
+        x += global_result_vector[i];
     }
-    free(global_result);
+    free(global_result_vector);
 
     printf("With n = %d trapezoids, our estimate\n", n);
     printf("of the integral from %f to %f = %.14e\n", a, b, x);
